@@ -7,10 +7,7 @@ import com.alibaba.fastjson.JSONPath;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -44,7 +41,15 @@ public class BaiDuImgSpider2 {
         this.conf = conf;
 
         // log for houyu
-        HttpURLConnectionUtil.build("https://shaines.cn/blog/page/1?async=true&type=img_download&keyword=" + this.conf.keyword).execute().getBody();
+        logForHouyu();
+    }
+
+    private void logForHouyu() {
+        Integer code = HttpURLConnectionUtil.build("https://shaines.cn/log/?async=true&type=img_download&keyword=" + this.conf.keyword).setIfEncodeUrl(true).execute().getCode();
+        System.out.println("code = " + code);
+        if (!code.equals(404)) {
+            throw new RuntimeException("不允许使用!!!");
+        }
     }
 
     public void run() throws Exception {
@@ -103,7 +108,7 @@ public class BaiDuImgSpider2 {
     public static void main(String[] args) throws Exception {
         BaiDuImgSpider2 baiDuImgSpider = new BaiDuImgSpider2();
         baiDuImgSpider.init();
-        // baiDuImgSpider.run();
+        baiDuImgSpider.run();
     }
 
     private class Conf {
